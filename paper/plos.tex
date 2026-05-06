@@ -288,25 +288,25 @@ Our approach builds upon these advances by integrating composite trust scoring d
 
 \subsection*{Offline Reinforcement Learning for Network Optimization}
 
-Offline RL learns policies from pre-collected datasets without online interaction, making it suitable for environments where real-time exploration is costly or risky~\cite{levine2020offline, fujimoto2019off}. This is particularly relevant for vehicular networks, where online exploration would require executing potentially suboptimal migration decisions on live traffic---a practice that could degrade user experience or violate safety constraints. Kumar et al.~\cite{kumar2020cql} proposed Conservative Q-Learning (CQL) to address the distributional shift problem in offline RL by penalizing Q-values for out-of-distribution actions. In the networking domain, offline RL has been applied to resource allocation~\cite{wang2021offline}, network slicing~\cite{wang2021intelligent}, and computation offloading~\cite{chen2021offline}.
+Offline RL learns policies from pre-collected datasets without online interaction, making it suitable for environments where real-time exploration is costly or risky~\cite{levine2020offline, fujimoto2019off}. This is particularly relevant for vehicular networks, where online exploration would require executing potentially suboptimal migration decisions on live traffic, a practice that could degrade user experience or violate safety constraints. Kumar et al.~\cite{kumar2020cql} proposed Conservative Q-Learning (CQL) to address the distributional shift problem in offline RL by penalizing Q-values for out-of-distribution actions. In the networking domain, offline RL has been applied to resource allocation~\cite{wang2021offline}, network slicing~\cite{wang2021intelligent}, and computation offloading~\cite{chen2021offline}.
 
-It is important to clarify the relationship between the learning approaches used in \VocSixG{}. Behavioral Cloning (BC) is employed as a supervised imitation learning baseline within the broader offline learning framework---it learns a policy by directly regressing observed actions in the logged dataset. Conservative Q-Learning (CQL) constitutes the proper offline reinforcement learning component that optimizes a Q-value function with explicit distributional shift mitigation. BC serves as a strong supervised baseline, while CQL provides value-based policy optimization that can, in principle, improve upon the logged policy where sufficient state-action coverage exists. Our work applies both approaches to vehicular task migration, learning from CyberTwin migration logs and employing success-weighted sampling to prioritize informative transitions. Prior offline RL approaches for networking have not been combined with trust-aware security filtering or federated training.
+The two learning approaches used in \VocSixG{} play complementary roles. Behavioral Cloning (BC) is a supervised imitation learning baseline within the broader offline learning framework: it learns a policy by directly regressing observed actions in the logged dataset. Conservative Q-Learning (CQL) is the offline reinforcement learning component that optimizes a Q-value function with explicit distributional shift mitigation. BC is a strong supervised baseline, while CQL provides value-based policy optimization that can, in principle, improve upon the logged policy where sufficient state-action coverage exists. Our work applies both approaches to vehicular task migration, learning from CyberTwin migration logs and employing success-weighted sampling to prioritize informative transitions. Prior offline RL approaches for networking have not been combined with trust-aware security filtering or federated training.
 
 \subsection*{Gap Analysis}
 
-Despite the rich body of literature, no existing work simultaneously addresses: (i) CyberTwin-facilitated data generation grounded in empirical distributions, (ii) predictive condition forecasting integrated with trust-aware security, (iii) offline learning policy optimization from logged migration data, and (iv) privacy-preserving federated training. \VocSixG{} closes this gap by providing a unified framework that integrates all these capabilities.
+Despite the existing literature, no prior work simultaneously addresses: (i) CyberTwin-facilitated data generation grounded in empirical distributions, (ii) predictive condition forecasting integrated with trust-aware security, (iii) offline learning policy optimization from logged migration data, and (iv) privacy-preserving federated training. \VocSixG{} closes this gap with a unified framework that integrates all these capabilities.
 
-To further articulate the novelty of \VocSixG{}, we identify five key limitations in the state of the art:
+To further articulate the contribution of \VocSixG{}, we identify five limitations in the state of the art:
 
-\textbf{1) Standalone simulation dependency.} Most published IoV task offloading frameworks rely on standalone network simulators (NS-3, OMNeT++, SUMO) to generate training data without grounding in empirical distributions. Network simulators typically use simplified stochastic models for channel fading, mobility patterns, and traffic generation that may not reflect measured deployment statistics. \VocSixG{} leverages a CyberTwin layer that maintains synchronized digital replicas calibrated with empirical distributions (3GPP propagation models, CRAWDAD mobility statistics, ETSI MEC utilization profiles~\cite{etsi_mec003}), providing a more operationally grounded evaluation environment.
+\textbf{1) Standalone simulation dependency.} Most published IoV task offloading frameworks rely on standalone network simulators (NS-3, OMNeT++, SUMO) to generate training data without grounding in empirical distributions. Network simulators typically use simplified stochastic models for channel fading, mobility patterns, and traffic generation that may not reflect measured deployment statistics. \VocSixG{} uses a CyberTwin layer that maintains synchronized digital replicas calibrated with empirical distributions (3GPP propagation models, CRAWDAD mobility statistics, ETSI MEC utilization profiles~\cite{etsi_mec003}), providing a more operationally grounded evaluation environment.
 
-\textbf{2) Limited predictive capability.} Prior work typically makes migration decisions based on instantaneous state observations without forecasting future conditions. In highly dynamic vehicular networks, the time between decision and execution can span hundreds of milliseconds---during which signal quality and edge load may change significantly due to vehicle movement, handovers, and concurrent task submissions. \VocSixG{} addresses this through explicit short-term prediction of RSRP degradation, dwell time, and congestion probability using LSTM models trained on historical observations harvested from the CyberTwin layer.
+\textbf{2) Limited predictive capability.} Prior work typically makes migration decisions based on instantaneous state observations without forecasting future conditions. In dynamic vehicular networks, the time between decision and execution can span hundreds of milliseconds, during which signal quality and edge load may change because of vehicle movement, handovers, and concurrent task submissions. \VocSixG{} addresses this through explicit short-term prediction of RSRP degradation, dwell time, and congestion probability using LSTM models trained on historical observations harvested from the CyberTwin layer.
 
-\textbf{3) Security-agnostic design.} Few existing frameworks incorporate node trustworthiness into migration decisions. A malicious or unreliable edge node can corrupt computation results, leak sensitive vehicular data, or cause service disruption. In multi-operator environments where edge infrastructure may be owned by different entities with varying security postures, trust-aware migration becomes essential. \VocSixG{} integrates composite trust scoring with anomaly detection to provide security-aware migration.
+\textbf{3) Security-agnostic design.} Few existing frameworks incorporate node trustworthiness into migration decisions. A malicious or unreliable edge node can corrupt computation results, leak sensitive vehicular data, or cause service disruption. In multi-operator environments where edge infrastructure may be owned by different entities with varying security postures, trust-aware migration is essential. \VocSixG{} integrates composite trust scoring with anomaly detection to provide security-aware migration.
 
-\textbf{4) Centralized training assumption.} Many deep learning-based approaches assume centralized access to all training data, which is impractical for multi-operator vehicular environments where data sharing is restricted by privacy regulations (GDPR, CCPA) and competitive concerns. Federated learning addresses this by enabling collaborative model improvement without raw data exchange, but prior FL-based approaches for edge computing have not been specifically tailored for the task migration use case with security integration.
+\textbf{4) Centralized training assumption.} Many deep learning-based approaches assume centralized access to all training data, which is impractical for multi-operator vehicular environments where data sharing is restricted by privacy regulations (GDPR, CCPA) and competitive concerns. Federated learning addresses this by supporting collaborative model improvement without raw data exchange, but prior FL-based approaches for edge computing have not been specifically tailored for the task migration use case with security integration.
 
-\textbf{5) No offline RL consideration.} Online RL methods require environment interaction during training, which is infeasible for real vehicular networks---one cannot safely explore random migration decisions on production traffic, as failed migrations directly impact user experience and safety. \VocSixG{} uses offline learning (Behavioral Cloning for imitation learning and Conservative Q-Learning for value-based policy optimization) that learns entirely from historical logged decisions, avoiding the exploration problem while still benefiting from policy optimization.
+\textbf{5) No offline RL consideration.} Online RL methods require environment interaction during training, which is infeasible for real vehicular networks: one cannot safely explore random migration decisions on production traffic, as failed migrations directly impact user experience and safety. \VocSixG{} uses offline learning (Behavioral Cloning for imitation learning and Conservative Q-Learning for value-based policy optimization) that learns entirely from historical logged decisions, avoiding the exploration problem while still benefiting from policy optimization.
 
 \textbf{6) Rigid optimization approaches.} Existing hyperparameter optimization for migration models typically uses grid search or Bayesian optimization, which may get trapped in local optima for high-dimensional search spaces. \VocSixG{} incorporates a modified simulated annealing optimizer with a nonstandard acceptance criterion for more efficient exploration of the hyperparameter space.
 
@@ -333,7 +333,7 @@ Adaptive HP-opt & -- & -- & -- & -- & \checkmark \\
 
 The assessments in Table~\ref{tab:gap_analysis} are justified as follows. Zhang et al.~\cite{ref_offload1} employ 3GPP TR 38.901 channel models for 6G offloading (Section~III.A) but do not incorporate empirical mobility distributions (CRAWDAD) or standardized MEC utilization profiles, yielding ``Partial'' for empirical calibration. Lim et al.~\cite{ref_fl_edge} address federated learning but do not include prediction or security modules. Chen et al.~\cite{ref_dtIoV} propose a digital twin for IoV with predictive scheduling capabilities (Section~IV.B) but do not integrate trust-aware node filtering, offline policy learning, or federated training. Li et al.~\cite{ref_offload2} incorporate a single-signal trust metric for node selection (Section~III.C) but do not employ multi-dimensional composite scoring with z-score anomaly detection, yielding ``Partial'' for security awareness. They apply offline RL to vehicular computation offloading but lack federated training and predictive modules. \VocSixG{} is the only framework that unifies all six capabilities within a single CyberTwin-enabled architecture.
 
-\VocSixG{}'s ``\checkmark'' for empirical calibration reflects the combination of empirically-calibrated mobility distributions (CRAWDAD Cabspotting statistics), standardized propagation models (3GPP TR 38.901 UMi LoS at 28\,GHz), and ETSI-grounded MEC utilization profiles (ETSI GS MEC 003~\cite{etsi_mec003})---a multi-source calibration not present in prior works that rely on single-source or fully synthetic parameter specifications.
+\VocSixG{}'s ``\checkmark'' for empirical calibration reflects the combination of empirically-calibrated mobility distributions (CRAWDAD Cabspotting statistics), standardized propagation models (3GPP TR 38.901 UMi LoS at 28\,GHz), and ETSI-grounded MEC utilization profiles (ETSI GS MEC 003~\cite{etsi_mec003}): a multi-source calibration not present in prior works that rely on single-source or fully synthetic parameter specifications.
 
 
 %% ============================================================
@@ -424,15 +424,15 @@ The \VocSixG{} framework comprises six interconnected modules, as illustrated in
 \subsection*{CyberTwin Layer}
 \label{sec:cybertwin}
 
-The CyberTwin layer forms the foundational data infrastructure of \VocSixG{}. It maintains persistent, synchronized digital replicas of each physical entity in the vehicular edge computing environment---300 vehicles, 25 RSUs, and 8 MEC servers. Each digital replica continuously tracks the state of its physical counterpart, including vehicle position, velocity, and trajectory; RSU signal coverage, load, and health status; and MEC server utilization, queue depth, and processing latency.
+The CyberTwin layer is the foundational data infrastructure of \VocSixG{}. It maintains persistent, synchronized digital replicas of each physical entity in the vehicular edge computing environment: 300 vehicles, 25 RSUs, and 8 MEC servers. Each digital replica continuously tracks the state of its physical counterpart, including vehicle position, velocity, and trajectory; RSU signal coverage, load, and health status; and MEC server utilization, queue depth, and processing latency.
 
 The CyberTwin layer serves two primary functions within \VocSixG{}:
 
-\textbf{State monitoring and synchronization.} Each digital replica maintains a real-time state vector that is periodically synchronized with its physical counterpart (or, in this evaluation, updated according to empirically-calibrated models). For vehicles, the CyberTwin tracks position, speed, heading, and connectivity status. For RSUs, it tracks signal parameters, connected vehicle count, and interference conditions. For MEC servers, it tracks CPU utilization, memory usage, queue length, and processing latency. This persistent state representation enables continuous monitoring and facilitates the collection of historical state logs for offline training.
+\textbf{State monitoring and synchronization.} Each digital replica maintains a real-time state vector that is periodically synchronized with its physical counterpart (or, in this evaluation, updated according to empirically-calibrated models). For vehicles, the CyberTwin tracks position, speed, heading, and connectivity status. For RSUs, it tracks signal parameters, connected vehicle count, and interference conditions. For MEC servers, it tracks CPU utilization, memory usage, queue length, and processing latency. This persistent state representation supports continuous monitoring and the collection of historical state logs for offline training.
 
-\textbf{Historical log collection and data harvesting.} The CyberTwin records timestamped state snapshots at regular intervals (10\,Hz for vehicle states, 1\,Hz for infrastructure states), building a comprehensive historical log of the vehicular edge environment. From these logs, migration decision instances are extracted: each instance records the full system state at the moment a migration decision is required, along with the outcome of that decision (success or failure, latency, deadline adherence). These harvested records constitute the training dataset $\mathcal{D}$ for the policy learning module.
+\textbf{Historical log collection and data harvesting.} The CyberTwin records timestamped state snapshots at regular intervals (10\,Hz for vehicle states, 1\,Hz for infrastructure states), building a historical log of the vehicular edge environment. From these logs, migration decision instances are extracted: each instance records the full system state at the moment a migration decision is required, along with the outcome of that decision (success or failure, latency, deadline adherence). These harvested records constitute the training dataset $\mathcal{D}$ for the policy learning module.
 
-The use of a CyberTwin layer, rather than a standalone simulator, provides several advantages: (i) the CyberTwin maintains persistent state across time steps, enabling the extraction of observation sequences for the LSTM predictive module; (ii) the CyberTwin's digital replicas can be individually calibrated with empirical distributions specific to each entity type; and (iii) the CyberTwin framework naturally supports federated learning, as each RSU/MEC zone's CyberTwin instance maintains its own local data repository.
+The use of a CyberTwin layer, rather than a standalone simulator, provides several advantages: (i) the CyberTwin maintains persistent state across time steps, supporting the extraction of observation sequences for the LSTM predictive module; (ii) the CyberTwin's digital replicas can be individually calibrated with empirical distributions specific to each entity type; and (iii) the CyberTwin framework naturally supports federated learning, as each RSU/MEC zone's CyberTwin instance maintains its own local data repository.
 
 \subsection*{Data Sources and Feature Engineering}
 \label{sec:data_sources}
@@ -445,7 +445,7 @@ The CyberTwin layer ingests data from three empirically-calibrated source models
 
 \textbf{Edge load model}: MEC server utilization in the CyberTwin is modeled following ETSI GS MEC 003~\cite{etsi_mec003} utilization profiles, reflecting typical urban edge computing workloads with diurnal patterns, burst arrivals, and temporal correlations.
 
-\textbf{ProvenanceRegistry}: The CyberTwin layer includes a ProvenanceRegistry that validates the format and completeness of all ingested data records. It records SHA-256 hashes of registered data files and enforces schema conformance, ensuring that all data entering the training pipeline satisfies format requirements and is free of structural inconsistencies. The ProvenanceRegistry validates data format and completeness rather than physical provenance, as all data is generated within the CyberTwin layer.
+\textbf{ProvenanceRegistry}: The CyberTwin layer includes a ProvenanceRegistry that validates the format and completeness of all ingested data records. It records SHA-256 hashes of registered data files and enforces schema conformance, so that all data entering the training pipeline satisfies format requirements and is free of structural inconsistencies. The ProvenanceRegistry validates data format and completeness rather than physical provenance, as all data is generated within the CyberTwin layer.
 
 From the raw CyberTwin state logs, ten features are extracted for each migration decision point:
 
@@ -462,12 +462,12 @@ From the raw CyberTwin state logs, ten features are extracted for each migration
     \item $\texttt{latency\_log}$: Logarithm of observed latency
 \end{itemize}
 
-The feature set captures the key determinants of migration success: signal quality (RSRP), mobility dynamics (speed, distance), task characteristics (size, deadline), and network state (load, latency). The squared speed and logarithmic transformations capture nonlinear relationships identified during exploratory analysis.
+The feature set captures the main determinants of migration success: signal quality (RSRP), mobility dynamics (speed, distance), task characteristics (size, deadline), and network state (load, latency). The squared speed and logarithmic transformations capture nonlinear relationships identified during exploratory analysis.
 
 \subsection*{Predictive Module}
 \label{sec:predictive}
 
-The predictive module employs an LSTM network to forecast four critical migration conditions from historical observation sequences harvested from the CyberTwin. Given a sequence of $T$ past observations $\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_T$, the LSTM predicts:
+The predictive module uses an LSTM network to forecast four migration conditions from historical observation sequences harvested from the CyberTwin. Given a sequence of $T$ past observations $\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_T$, the LSTM predicts:
 
 \begin{enumerate}
     \item \textbf{Remaining dwell time} $\hat{d}_{t+1}$: Estimated time before the vehicle exits the serving RSU's coverage area.
@@ -478,12 +478,12 @@ The predictive module employs an LSTM network to forecast four critical migratio
 
 The LSTM architecture consists of two stacked layers with 128 hidden units each, followed by a fully connected output layer. The input sequence length is set to $T=10$ time steps, corresponding to approximately 1 second of observations at 10\,Hz sampling rate. Sequences are extracted using a sliding window of $W=10$ from chronologically sorted migration logs per vehicle within the CyberTwin. The module is trained using mean squared error (MSE) loss for continuous predictions and binary cross-entropy (BCE) loss for the failure probability estimate. Dropout regularization ($p=0.2$) is applied between LSTM layers to prevent overfitting.
 
-The predicted conditions augment the feature vector passed to the policy module, enabling proactive migration decisions. For example, if the predicted dwell time is shorter than the estimated migration completion time, the policy may opt for local execution even if current conditions appear favorable.
+The predicted conditions augment the feature vector passed to the policy module, supporting proactive migration decisions. For example, if the predicted dwell time is shorter than the estimated migration completion time, the policy may opt for local execution even if current conditions appear favorable.
 
 \subsection*{Trust Scoring and Anomaly Detection Module}
 \label{sec:trust}
 
-Security in \VocSixG{} is addressed through a multi-faceted trust scoring system that evaluates the reliability of each candidate edge node. The composite trust score $\tau_i$ for node $i$ is computed as:
+Security in \VocSixG{} is addressed through a multi-component trust scoring system that evaluates the reliability of each candidate edge node. The composite trust score $\tau_i$ for node $i$ is computed as:
 
 \begin{equation}
 \tau_i = \alpha \cdot s_i^{\text{hist}} + \beta \cdot s_i^{\text{anom}} + \gamma \cdot s_i^{\text{auth}} + \delta \cdot s_i^{\text{streak}}
@@ -502,12 +502,12 @@ The weights $\alpha, \beta, \gamma, \delta$ satisfy $\alpha + \beta + \gamma + \
 
 Nodes with trust scores below a configurable threshold $\tau_{\min}$ are excluded from the candidate set for migration. The trust-aware variant of \VocSixG{} integrates this filtering into the policy inference pipeline, effectively removing low-trust nodes from consideration before the migration decision is made.
 
-\textbf{Leak-free trust computation.} To prevent information leakage, trust scores for the leak-free variant are computed exclusively from a temporal prefix (first 70\%) of the training data. The test set is excluded from trust computation entirely, ensuring that no future information influences the trust scores used during evaluation.
+\textbf{Leak-free trust computation.} To prevent information leakage, trust scores for the leak-free variant are computed exclusively from a temporal prefix (first 70\%) of the training data. The test set is excluded from trust computation entirely, so that no future information influences the trust scores used during evaluation.
 
 \subsection*{Migration Policy Module}
 \label{sec:policy}
 
-The migration policy module learns to make optimal binary decisions---\emph{local execution} versus \emph{edge migration}---from logged CyberTwin migration data. We implement two offline learning approaches:
+The migration policy module learns to make optimal binary decisions, \emph{local execution} versus \emph{edge migration}, from logged CyberTwin migration data. We implement two offline learning approaches:
 
 \subsubsection{Behavioral Cloning (BC)}
 
@@ -523,12 +523,12 @@ The network is trained to minimize the cross-entropy loss between predicted and 
 \mathcal{L}_{\text{BC}} = -\frac{1}{N} \sum_{i=1}^{N} \log \pi_\theta(a_i^* \mid \mathbf{x}_i)
 \end{equation}
 
-where $a_i^*$ is the ground-truth action (the optimal migration decision determined by the actual outcome in the logs). Success-weighted sampling assigns higher probability to transitions where the ground-truth action led to a successful outcome, ensuring the model prioritizes learning from informative positive examples.
+where $a_i^*$ is the ground-truth action (the optimal migration decision determined by the actual outcome in the logs). Success-weighted sampling assigns higher probability to transitions where the ground-truth action led to a successful outcome, so that the model prioritizes learning from informative positive examples.
 
 \subsubsection{Conservative Q-Learning (CQL)}
 
 \textbf{MDP Formulation.}
-We formulate the migration decision problem as a contextual bandit---a special case of a Markov Decision Process (MDP) where each decision is independent and there is no sequential state dependence within an episode. The formal specification is as follows. The state space is $\mathcal{S} \subset \mathbb{R}^{10}$ (or $\mathbb{R}^{14}$ with LSTM features), where each state $s$ is the feature vector $\mathbf{x}$ describing the current vehicular and network conditions at the migration decision point. The action space is $\mathcal{A} = \{a_{\text{local}}, a_{\text{migrate}}\}$, representing the binary migration decision. The reward function is defined as $R(s, a) = \mathbf{1}[\text{outcome}(s, a) = \text{success}] - \mathbf{1}[\text{outcome}(s, a) = \text{failure}]$, yielding $+1$ for successful task completion and $-1$ for failure. For the BC formulation, the reward is implicit in the ground-truth action label. Since each migration decision is independent---the outcome of one decision does not affect the state for the next---the transition probability $P(s' | s, a)$ is degenerate: the next state $s'$ is determined by the CyberTwin's environment update, independent of the current action. This makes the problem a contextual bandit.
+We formulate the migration decision problem as a contextual bandit, a special case of a Markov Decision Process (MDP) where each decision is independent and there is no sequential state dependence within an episode. The formal specification is as follows. The state space is $\mathcal{S} \subset \mathbb{R}^{10}$ (or $\mathbb{R}^{14}$ with LSTM features), where each state $s$ is the feature vector $\mathbf{x}$ describing the current vehicular and network conditions at the migration decision point. The action space is $\mathcal{A} = \{a_{\text{local}}, a_{\text{migrate}}\}$, representing the binary migration decision. The reward function is defined as $R(s, a) = \mathbf{1}[\text{outcome}(s, a) = \text{success}] - \mathbf{1}[\text{outcome}(s, a) = \text{failure}]$, yielding $+1$ for successful task completion and $-1$ for failure. For the BC formulation, the reward is implicit in the ground-truth action label. Since each migration decision is independent (the outcome of one decision does not affect the state for the next), the transition probability $P(s' | s, a)$ is degenerate: the next state $s'$ is determined by the CyberTwin's environment update, independent of the current action. This makes the problem a contextual bandit.
 
 \textbf{Reformulation for CQL.}
 In the contextual bandit setting, the temporal difference loss reduces to a one-step regression:
@@ -554,7 +554,7 @@ The policy network consists of three fully connected layers with hidden sizes [2
 \subsection*{Federated Learning Layer}
 \label{sec:federated}
 
-To enable privacy-preserving distributed training, \VocSixG{} implements a Federated Learning layer that trains local policy models on each RSU/MEC zone's CyberTwin migration logs and aggregates updates centrally without sharing raw data.
+To support privacy-preserving distributed training, \VocSixG{} implements a Federated Learning layer that trains local policy models on each RSU/MEC zone's CyberTwin migration logs and aggregates updates centrally without sharing raw data.
 
 \subsubsection{Client-Level Training}
 
@@ -594,7 +594,7 @@ P(\text{accept}) = \min\left(1, \exp\left(-\frac{\Delta E}{\gamma \cdot T}\right
 \label{eq:sa}
 \end{equation}
 
-where $\Delta E$ is the energy difference (objective change), $T$ is the current temperature, and $\gamma, \beta$ are mixing parameters. The $\cos^2$ term modulates the classical Metropolis acceptance probability, providing a heuristic mechanism for escaping local minima that differs from standard simulated annealing. We present this as a practical modification without claiming quantum mechanical derivation. The module is ablatable; a standard simulated annealing variant using the classical Metropolis criterion is available for comparison.
+where $\Delta E$ is the energy difference (objective change), $T$ is the current temperature, and $\gamma, \beta$ are mixing parameters. The $\cos^2$ term modulates the classical Metropolis acceptance probability, providing a heuristic for escaping local minima that differs from standard simulated annealing. We present this as a practical modification without claiming quantum mechanical derivation. The module is ablatable; a standard simulated annealing variant using the classical Metropolis criterion is available for comparison.
 
 
 %% ============================================================
@@ -715,7 +715,7 @@ We compare \VocSixG{} against seven baselines spanning heuristics, classical ML,
     \item \textbf{BiLSTM}: Bidirectional LSTM with 2 layers $\times$ 64 hidden units per direction.
 \end{enumerate}
 
-All methods receive identical input features extracted from the CyberTwin logs and are evaluated on the same held-out test set, ensuring fair comparison.
+All methods receive identical input features extracted from the CyberTwin logs and are evaluated on the same held-out test set for fair comparison.
 
 
 %% ============================================================
@@ -726,18 +726,18 @@ All methods receive identical input features extracted from the CyberTwin logs a
 
 \subsection*{Experimental Setup}
 
-\textbf{Dataset statistics}: The final dataset $\mathcal{D}$ contains 40,000 migration decision instances harvested from the CyberTwin layer, each characterized by 10 input features and a binary label (local vs.\ migration). The dataset is split into training (28,000), validation (6,000), and test (6,000) sets with a 70:15:15 ratio. All methods are evaluated on the same held-out CyberTwin test data, ensuring fair comparison.
+\textbf{Dataset statistics}: The final dataset $\mathcal{D}$ contains 40,000 migration decision instances harvested from the CyberTwin layer, each characterized by 10 input features and a binary label (local vs.\ migration). The dataset is split into training (28,000), validation (6,000), and test (6,000) sets with a 70:15:15 ratio. All methods are evaluated on the same held-out CyberTwin test data for fair comparison.
 
-\textbf{Evaluation metrics}: We employ a comprehensive set of metrics: Accuracy, macro-averaged F1 score (F1-Macro), Area Under the ROC Curve (AUC-ROC), Precision, Recall, Matthews Correlation Coefficient (MCC), False Positive Rate (FPR), and False Negative Rate (FNR). MCC is particularly informative as it provides a balanced measure even with class imbalance.
+\textbf{Evaluation metrics}: We use the following metrics: Accuracy, macro-averaged F1 score (F1-Macro), Area Under the ROC Curve (AUC-ROC), Precision, Recall, Matthews Correlation Coefficient (MCC), False Positive Rate (FPR), and False Negative Rate (FNR). MCC is particularly informative as it provides a balanced measure even with class imbalance.
 
 \textbf{Implementation details}: All experiments are conducted on an NVIDIA T4 GPU. Neural network baselines are trained using PyTorch 2.1 with the same training budget (100 epochs, early stopping). Classical ML baselines use scikit-learn 1.3 with default hyperparameters unless otherwise specified.
 
 \subsection*{Main Results}
 
-Table~\ref{tab:main_results} presents the comprehensive comparison of all 13 methods on the 6,000-instance test set.
+Table~\ref{tab:main_results} compares all 13 methods on the 6,000-instance test set.
 
 \begin{table*}[t]
-\caption{Comprehensive performance comparison of all methods on the 6,000-instance held-out test set. Bold entries indicate proposed \VocSixG{} framework variants.\footnotemark}
+\caption{Performance comparison of all methods on the 6,000-instance held-out test set. Bold entries indicate proposed \VocSixG{} framework variants.\footnotemark}
 \label{tab:main_results}
 \centering
 \small
@@ -765,20 +765,20 @@ BiLSTM           & 0.9927 & 0.9920 & 0.9921 & 0.9918 & 0.9921 & 0.9835 & 0.0060 
 \footnotetext{Note: $^\dagger$When trust scores are computed from the full training set, information leakage yields F1=1.0000---this represents an upper bound artifact, not genuine generalization performance. The Leak-Free variant uses chronologically-split trust data.}
 \end{table*}
 
-\textbf{Analysis}: The results reveal several important findings:
+\textbf{Analysis}: The results show several findings:
 
 \begin{enumerate}
-    \item \textbf{Heuristic baselines fail}: Both ``Local Only'' and ``Nearest Edge'' achieve AUC-ROC of 0.5000 (random performance), confirming that simplistic migration strategies are fundamentally inadequate.
+    \item \textbf{Heuristic baselines fail}: Both ``Local Only'' and ``Nearest Edge'' achieve AUC-ROC of 0.5000 (random performance), confirming that simplistic migration strategies are inadequate.
 
-    \item \textbf{ML and DL baselines perform strongly}: All learning-based baselines achieve accuracy above 99\%. Random Forest achieves the best performance among non-\VocSixG{} methods (F1-Macro=0.9929, AUC=0.9928), confirming that the engineered feature set provides strong discriminative power. MLP achieves F1-Macro=0.9926 with the lowest FNR among baselines (0.0070). TextCNN (F1=0.9918) and BiLSTM (F1=0.9920) show competitive but not superior performance compared to simpler models.
+    \item \textbf{ML and DL baselines perform strongly}: All learning-based baselines achieve accuracy above 99\%. Random Forest is the best non-\VocSixG{} method (F1-Macro=0.9929, AUC=0.9928), confirming that the engineered feature set provides strong discriminative power. MLP achieves F1-Macro=0.9926 with the lowest FNR among baselines (0.0070). TextCNN (F1=0.9918) and BiLSTM (F1=0.9920) perform on par with, but not above, simpler models.
 
-    \item \textbf{Voc-6G (BC) performs comparably to baselines}: The core \VocSixG{} BC model achieves F1-Macro=0.9922 and AUC-ROC=0.9924, slightly below Random Forest (0.9929). This confirms that imitation learning from CyberTwin logged decisions is effective but does not inherently outperform classical ML on this feature set.
+    \item \textbf{Voc-6G (BC) performs comparably to baselines}: The core \VocSixG{} BC model achieves F1-Macro=0.9922 and AUC-ROC=0.9924, slightly below Random Forest (0.9929). Imitation learning from CyberTwin logged decisions is effective but does not inherently outperform classical ML on this feature set.
 
-    \item \textbf{Federated training matches centralized performance}: \VocSixG{} Federated achieves F1-Macro=0.9929 and AUC-ROC=0.9933, matching Random Forest and exceeding centralized BC. The federated variant achieves the lowest FNR among all non-trust-aware methods (0.0074), suggesting that distributed training provides a beneficial regularization effect.
+    \item \textbf{Federated training matches centralized performance}: \VocSixG{} Federated achieves F1-Macro=0.9929 and AUC-ROC=0.9933, matching Random Forest and exceeding centralized BC. The federated variant achieves the lowest FNR among all non-trust-aware methods (0.0074), suggesting that distributed training provides a regularization effect.
 
     \item \textbf{CQL underperforms BC significantly}: \VocSixG{} (CQL) achieves F1-Macro=0.9887, 0.35 percentage points below BC. This result is analyzed in detail in the \nameref{sec:cql_analysis} subsection. CQL's conservatism penalizes out-of-distribution actions, and the offline CyberTwin dataset has limited state-action coverage, causing CQL to underperform the supervised BC baseline.
 
-    \item \textbf{Leak-free trust-aware filtering provides substantial gains}: \VocSixG{} Leak-Free Trust-Aware achieves F1-Macro=0.9998, providing a +0.76 percentage point improvement over BC alone. This demonstrates that trust-aware node filtering meaningfully improves classification even without information leakage from the trust computation. The model makes only 1 error on the 6,000-instance test set (FNR=0.0005).
+    \item \textbf{Leak-free trust-aware filtering provides substantial gains}: \VocSixG{} Leak-Free Trust-Aware achieves F1-Macro=0.9998, a +0.76 percentage point improvement over BC alone. Trust-aware node filtering meaningfully improves classification even without information leakage from the trust computation. The model makes only 1 error on the 6,000-instance test set (FNR=0.0005).
 
     \item \textbf{LSTM features provide marginal improvement}: \VocSixG{} (BC + LSTM) achieves F1-Macro=0.9926 compared to BC's 0.9922, a modest +0.04 percentage point improvement. The base features already capture the primary migration determinants; LSTM predictions add only a small additional signal.
 \end{enumerate}
@@ -804,7 +804,7 @@ Fig~\ref{fig_radar} provides a radar chart visualization of the multi-metric pro
 \subsection*{CQL vs BC Performance Analysis}
 \label{sec:cql_analysis}
 
-The underperformance of CQL relative to BC warrants specific analysis. Fig~\ref{fig_cql_comparison} compares BC and CQL across multiple metrics.
+The underperformance of CQL relative to BC deserves specific analysis. Fig~\ref{fig_cql_comparison} compares BC and CQL across multiple metrics.
 
 \begin{figure}[t]
 \centering
@@ -813,7 +813,7 @@ The underperformance of CQL relative to BC warrants specific analysis. Fig~\ref{
 \label{fig_cql_comparison}
 \end{figure}
 
-CQL underperforms BC by 0.35 percentage points in F1-Macro (0.9887 vs.\ 0.9922) due to the conservative penalty $\alpha_{\text{CQL}}$ on out-of-distribution actions (Eq.~\ref{eq:cql}). An interesting asymmetry is observed: CQL achieves the lowest FNR of any method (0.0019) but the highest FPR among learning methods (0.0153). This suggests that CQL's conservatism biases it toward the ``migrate'' action, correctly identifying nearly all true positives but incurring false positives in states where local execution would be correct. The offline CyberTwin dataset has limited coverage of state-action pairs---the behavioral policy that generated the logged data predominantly selected one action for most states, leaving the Q-function poorly estimated for the alternative action. CQL's conservatism further penalizes these underrepresented actions, distorting the decision boundary. In contrast, BC directly imitates the behavioral policy without requiring value estimation, making it more robust to limited data coverage.
+CQL underperforms BC by 0.35 percentage points in F1-Macro (0.9887 vs.\ 0.9922) because of the conservative penalty $\alpha_{\text{CQL}}$ on out-of-distribution actions (Eq.~\ref{eq:cql}). The error profile is asymmetric: CQL achieves the lowest FNR of any method (0.0019) but the highest FPR among learning methods (0.0153). This suggests that CQL's conservatism biases it toward the ``migrate'' action, correctly identifying nearly all true positives but incurring false positives in states where local execution would be correct. The offline CyberTwin dataset has limited coverage of state-action pairs: the behavioral policy that generated the logged data predominantly selected one action for most states, leaving the Q-function poorly estimated for the alternative action. CQL's conservatism further penalizes these underrepresented actions, distorting the decision boundary. In contrast, BC directly imitates the behavioral policy without requiring value estimation, which makes it more tolerant of limited data coverage.
 
 This finding has practical implications: for offline datasets with moderate coverage (as is typical for CyberTwin-harvested migration logs), supervised imitation learning via BC may be preferred over value-based offline RL unless the dataset is specifically collected to ensure broad state-action coverage.
 
@@ -839,9 +839,9 @@ Voc-6G Post-Hoc Trust Filter          & 0.3906 & 0.0000 & 0.3906--0.3906 \\
 \end{tabular}
 \end{table}
 
-The BC variant achieves a mean F1-Macro of $0.9925 \pm 0.0011$, demonstrating consistent performance across seeds. CQL shows comparable variance ($0.9879 \pm 0.0008$) at a lower performance level. The federated variant shows the tightest variance among learning methods ($0.9924 \pm 0.0005$), suggesting that federated averaging acts as an additional stabilizer. The leak-free trust-aware variant achieves the highest mean ($0.9998 \pm 0.0001$) with near-zero variance, confirming that trust-aware filtering provides both accuracy and stability benefits.
+The BC variant achieves a mean F1-Macro of $0.9925 \pm 0.0011$, with consistent performance across seeds. CQL shows comparable variance ($0.9879 \pm 0.0008$) at a lower performance level. The federated variant shows the tightest variance among learning methods ($0.9924 \pm 0.0005$), suggesting that federated averaging acts as an additional stabilizer. The leak-free trust-aware variant achieves the highest mean ($0.9998 \pm 0.0001$) with near-zero variance, indicating that trust-aware filtering provides both accuracy and stability benefits.
 
-\textbf{Post-Hoc Trust Filter failure.} A critical finding is the catastrophic failure of the post-hoc trust filter variant, which achieves F1=0.3906 across all seeds with zero variance. This variant applies a trust threshold ($\tau_{\min}=0.5$) as a post-prediction override: when a node's trust score falls below the threshold, the model's ``migrate'' prediction is overridden to ``local.'' With 2,154 out of 6,000 test instances overridden, the filter effectively forces all predictions to ``local,'' matching the Local Only baseline (F1=0.3906). This demonstrates that \emph{simple post-hoc threshold filtering is not viable} for trust-aware migration---trust must be integrated into the model architecture as input features rather than applied as a post-processing step. The threshold-based approach lacks the nuance to distinguish between marginally-trusted nodes that can safely serve certain tasks and genuinely untrusted nodes that should be avoided.
+\textbf{Post-Hoc Trust Filter failure.} The post-hoc trust filter variant fails catastrophically, achieving F1=0.3906 across all seeds with zero variance. This variant applies a trust threshold ($\tau_{\min}=0.5$) as a post-prediction override: when a node's trust score falls below the threshold, the model's ``migrate'' prediction is overridden to ``local.'' With 2,154 out of 6,000 test instances overridden, the filter effectively forces all predictions to ``local,'' matching the Local Only baseline (F1=0.3906). This shows that \emph{simple post-hoc threshold filtering is not viable} for trust-aware migration: trust must be integrated into the model architecture as input features rather than applied as a post-processing step. The threshold-based approach lacks the nuance to distinguish between marginally-trusted nodes that can safely serve certain tasks and genuinely untrusted nodes that should be avoided.
 
 Fig~\ref{fig_multiseed} illustrates the per-seed F1-Macro distribution.
 
@@ -865,9 +865,9 @@ Fig~\ref{fig:confusion} presents the confusion matrices for selected methods, pr
 
 \textbf{Heuristic methods}: ``Local Only'' correctly identifies all true negatives (TN=3846) but fails on every true positive (FN=2154). Conversely, ``Nearest Edge'' correctly identifies all true positives (TP=2154) but incurs 3846 false positives (FP=3846). Neither heuristic achieves meaningful classification.
 
-\textbf{ML-based methods}: Random Forest misclassifies 39 instances (18 FP + 21 FN), demonstrating that the feature space is highly informative for migration decisions. SVM misclassifies 46 instances (27 FP + 19 FN). MLP achieves a balanced error profile with 41 misclassifications (26 FP + 15 FN). The errors are roughly balanced between false positives and false negatives across methods, indicating no systematic bias.
+\textbf{ML-based methods}: Random Forest misclassifies 39 instances (18 FP + 21 FN), showing that the feature space is highly informative for migration decisions. SVM misclassifies 46 instances (27 FP + 19 FN). MLP achieves a balanced error profile with 41 misclassifications (26 FP + 15 FN). The errors are roughly balanced between false positives and false negatives across methods, indicating no systematic bias.
 
-\textbf{Voc-6G variants}: The BC variant misclassifies 43 instances (23 FP + 20 FN). The federated variant reduces this to 39 (23 FP + 16 FN), with the improvement concentrated in reduced false negatives. The leak-free trust-aware variant achieves near-perfect classification with only 1 misclassification on the 6,000-instance test set (1 FN, 0 FP), confirming that the trust module's filtering substantially reduces decision ambiguity.
+\textbf{Voc-6G variants}: The BC variant misclassifies 43 instances (23 FP + 20 FN). The federated variant reduces this to 39 (23 FP + 16 FN), with the improvement concentrated in reduced false negatives. The leak-free trust-aware variant achieves near-perfect classification with only 1 misclassification on the 6,000-instance test set (1 FN, 0 FP), confirming that the trust module's filtering reduces decision ambiguity.
 
 \subsection*{FPR vs.\ FNR Analysis}
 
@@ -880,9 +880,9 @@ Fig~\ref{fig_fpr_fnr} visualizes the false positive and false negative rates for
 \label{fig_fpr_fnr}
 \end{figure}
 
-Among learning-based methods, Random Forest exhibits the lowest FPR (0.0047) and moderate FNR (0.0097). MLP achieves the lowest FNR (0.0070) among baselines. CQL shows a distinctive asymmetric profile: the lowest FNR of any method (0.0019) but the highest FPR among learning methods (0.0153), consistent with its conservatism biasing toward the ``migrate'' action. \VocSixG{} Federated achieves a good balance (FPR=0.0060, FNR=0.0074), and \VocSixG{} Leak-Free Trust-Aware achieves the lowest error rates overall (FPR=0.0000, FNR=0.0005).
+Among learning-based methods, Random Forest has the lowest FPR (0.0047) and moderate FNR (0.0097). MLP achieves the lowest FNR (0.0070) among baselines. CQL shows an asymmetric profile: the lowest FNR of any method (0.0019) but the highest FPR among learning methods (0.0153), consistent with its conservatism biasing toward the ``migrate'' action. \VocSixG{} Federated achieves a balanced profile (FPR=0.0060, FNR=0.0074), and \VocSixG{} Leak-Free Trust-Aware achieves the lowest error rates overall (FPR=0.0000, FNR=0.0005).
 
-In the vehicular context, false positives (unnecessary migrations) waste network resources and may introduce latency, while false negatives (missed migrations) force local execution of tasks that would benefit from edge computing, potentially causing deadline violations. The federated variant's balanced error profile makes it particularly suitable for deployment where both types of errors must be minimized.
+In the vehicular context, false positives (unnecessary migrations) waste network resources and may introduce latency, while false negatives (missed migrations) force local execution of tasks that would benefit from edge computing, potentially causing deadline violations. The federated variant's balanced error profile is well-suited for deployments where both types of errors must be minimized.
 
 \subsection*{Ablation Study}
 \label{sec:ablation}
@@ -898,7 +898,7 @@ To understand the contribution of each component, we evaluate multiple ablated v
     \item \textbf{Voc-6G Post-Hoc Trust Filter}: BC policy with trust applied as a post-prediction filter.
 \end{enumerate}
 
-The results demonstrate several key findings:
+The results show several findings:
 \begin{itemize}
     \item \textbf{LSTM contribution}: BC with 10 original features achieves F1-Macro=0.9922; BC with 10+4 LSTM features achieves F1-Macro=0.9926, an improvement of +0.04 percentage points. While statistically measurable, this improvement is modest because the 10 base features already contain strong signals that capture the primary determinants of migration success. The LSTM predictions provide a small but consistent additional signal, particularly for edge cases where the base features are near decision boundaries.
 
@@ -906,7 +906,7 @@ The results demonstrate several key findings:
 
     \item \textbf{Federated training}: Federated BC maintains F1-Macro=0.9929, actually exceeding centralized BC (0.9922) by 0.07 percentage points. The federated variant's slightly higher accuracy suggests that distributed training provides a regularization effect, mitigating overfitting to zone-specific patterns.
 
-    \item \textbf{Trust integration}: Leak-free trust-aware filtering (F1=0.9998) provides a substantial +0.76 percentage point improvement over BC, quantifying the significant value of security-aware mechanisms. In contrast, the post-hoc trust filter achieves only F1=0.3906---worse than even the Local Only heuristic---because the threshold-based override forces all predictions to ``local.'' This stark contrast demonstrates that trust must be architecturally integrated rather than applied as a simple post-processing step.
+    \item \textbf{Trust integration}: Leak-free trust-aware filtering (F1=0.9998) provides a +0.76 percentage point improvement over BC, quantifying the value of security-aware mechanisms. In contrast, the post-hoc trust filter achieves only F1=0.3906, worse than even the Local Only heuristic, because the threshold-based override forces all predictions to ``local.'' This contrast shows that trust must be architecturally integrated rather than applied as a simple post-processing step.
 \end{itemize}
 
 Fig~\ref{fig_variants} visualizes the performance of all \VocSixG{} variants.
@@ -929,13 +929,13 @@ Fig~\ref{fig_federated_convergence} shows the federated training convergence pro
 \label{fig_federated_convergence}
 \end{figure}
 
-The federated variant converges within approximately 20 communication rounds (out of 100 total), as measured by validation F1-Macro score stabilization at approximately 0.989. The convergence profile exhibits two distinct phases: (i) a rapid improvement phase during rounds 1--20 where the global model benefits significantly from aggregating diverse local experiences, and (ii) a convergence phase during rounds 20--100 where the validation F1 stabilizes within $\pm 0.001$ of the final value. This rapid convergence suggests that the migration decision distribution is relatively homogeneous across zones, enabling efficient distributed learning.
+The federated variant converges within approximately 20 communication rounds (out of 100 total), as measured by validation F1-Macro score stabilization at approximately 0.989. The convergence profile has two phases: (i) a rapid improvement phase during rounds 1--20 where the global model benefits from aggregating diverse local experiences, and (ii) a convergence phase during rounds 20--100 where the validation F1 stabilizes within $\pm 0.001$ of the final value. This rapid convergence suggests that the migration decision distribution is relatively homogeneous across zones, supporting efficient distributed learning.
 
 \textbf{FedProx analysis.} The use of FedProx with $\mu=0.01$ provides marginal improvements in convergence stability compared to pure FedAvg. We acknowledge that the low inter-client heterogeneity (detailed below) limits the differential benefit of FedProx. The proximal term becomes more beneficial in deployment scenarios with higher data heterogeneity, such as mixed highway-urban zones with different mobility patterns.
 
-\textbf{Communication efficiency.} The per-round communication overhead consists of transmitting model parameters (approximately 2.1\,MB per client update). With 8 clients and 100 rounds, the total communication volume is approximately 1.68 GB---feasible for 6G backhaul links with gigabit-per-second capacities.
+\textbf{Communication efficiency.} The per-round communication overhead consists of transmitting model parameters (approximately 2.1\,MB per client update). With 8 clients and 100 rounds, the total communication volume is approximately 1.68 GB, feasible for 6G backhaul links with gigabit-per-second capacities.
 
-\textbf{Client heterogeneity analysis.} The mean inter-client standard deviation across validation F1 scores is approximately 0.0008, indicating low inter-client variance. This suggests that the migration decision distribution is relatively homogeneous across zones---a favorable condition for federated learning that aligns with the theoretical requirements of FedAvg convergence guarantees.
+\textbf{Client heterogeneity analysis.} The mean inter-client standard deviation across validation F1 scores is approximately 0.0008, indicating low inter-client variance. This suggests that the migration decision distribution is relatively homogeneous across zones, a favorable condition for federated learning that aligns with the theoretical requirements of FedAvg convergence guarantees.
 
 \subsection*{Per-Method Effective Migration Success Rate}
 
@@ -966,13 +966,13 @@ Voc-6G Post-Hoc Filter  & 0.00 \\
 \end{tabular}
 \end{table}
 
-\textbf{Interpretation.} These rates are remarkably similar across all learning-based methods (37.60--38.16\%), because they depend on the underlying data distribution rather than the classifier's accuracy. The effective success rate is determined by which test instances the method chooses to migrate and whether those instances happen to succeed in the dataset. Since all well-performing classifiers produce similar migration decisions (differing on only 30--60 out of 6,000 instances), their effective success rates naturally converge.
+\textbf{Interpretation.} These rates are similar across all learning-based methods (37.60--38.16\%), because they depend on the underlying data distribution rather than the classifier's accuracy. The effective success rate is determined by which test instances the method chooses to migrate and whether those instances happen to succeed in the dataset. Since all well-performing classifiers produce similar migration decisions (differing on only 30--60 out of 6,000 instances), their effective success rates naturally converge.
 
-\textbf{Local Only (0.0\%)} achieves zero effective success rate because it never migrates---it always executes locally, and ``success'' in this metric requires task completion at the edge node. Conversely, \textbf{Post-Hoc Trust Filter (0.0\%)} achieves zero because the trust threshold overrides all 2,154 migrate predictions to local, effectively becoming identical to Local Only.
+\textbf{Local Only (0.0\%)} achieves zero effective success rate because it never migrates: it always executes locally, and ``success'' in this metric requires task completion at the edge node. Conversely, \textbf{Post-Hoc Trust Filter (0.0\%)} achieves zero because the trust threshold overrides all 2,154 migrate predictions to local, effectively becoming identical to Local Only.
 
-\textbf{Nearest Edge (43.07\%)} achieves the highest raw success rate because it migrates all 6,000 instances, maximizing the numerator (successful migrations) while also maximizing the denominator (total instances). The learning-based methods' rates of ~37--38\% reflect the fact that they correctly identify the ~36\% of instances where migration is favorable, with a small fraction of those failing due to edge conditions.
+\textbf{Nearest Edge (43.07\%)} achieves the highest raw success rate because it migrates all 6,000 instances, maximizing the numerator (successful migrations) while also maximizing the denominator (total instances). The learning-based methods' rates of ~37--38\% reflect the fact that they correctly identify the ~36\% of instances where migration is favorable, with a small fraction of those failing because of edge conditions.
 
-\textbf{Key insight}: The classifier's primary value is not in improving the success rate of chosen migrations, but in \emph{avoiding failed migrations}. By correctly predicting ``local'' for unfavorable conditions, the classifier prevents wasteful migrations that would degrade QoS and waste network resources. This distinction is crucial for understanding the practical value of the migration decision framework.
+\textbf{Main insight}: The classifier's main value is not in improving the success rate of chosen migrations, but in \emph{avoiding failed migrations}. By correctly predicting ``local'' for unfavorable conditions, the classifier prevents wasteful migrations that would degrade QoS and waste network resources. This distinction is important for understanding the practical value of the migration decision framework.
 
 Fig~\ref{fig_per_method_success} visualizes these per-method success rates.
 
@@ -1006,13 +1006,13 @@ Failure probability  & 0.491   & 0.497   & 0.4992 / 0.247 \\
 
 The LSTM predictive module shows mixed results across targets, with honest characterization of each:
 
-\textbf{Future RSRP (MAE=1.63\,dB, RMSE=2.12\,dB)}: This is the strongest prediction target, achieving accuracy sufficient to distinguish favorable ($>-85$\,dBm) from unfavorable signal conditions. Single-step RSRP prediction benefits from strong temporal autocorrelation in signal strength measurements.
+\textbf{Future RSRP (MAE=1.63\,dB, RMSE=2.12\,dB)}: This is the strongest prediction target, accurate enough to distinguish favorable ($>-85$\,dBm) from unfavorable signal conditions. Single-step RSRP prediction benefits from strong temporal autocorrelation in signal strength measurements.
 
-\textbf{Congestion level (MAE=0.186, RMSE=0.190)}: Moderate prediction accuracy. Congestion exhibits bursty behavior that is partially predictable from recent history but also contains stochastic components from concurrent task arrivals.
+\textbf{Congestion level (MAE=0.186, RMSE=0.190)}: Moderate prediction accuracy. Congestion has bursty behavior that is partially predictable from recent history but also contains stochastic components from concurrent task arrivals.
 
-\textbf{Dwell time (MAE=134.36\,s, RMSE=181.42\,s)}: High prediction error, reflecting the inherent difficulty of dwell time estimation. The ground-truth dwell time is computed as a proxy based on distance and speed at the observation time, rather than being directly measured from actual vehicle departure events. This proxy target has high variance---vehicles may decelerate, change direction, or stop within the coverage zone, introducing noise that no model can fully capture. Despite the high MAE, the binary decision of ``is dwell time sufficient for migration?'' remains learnable because the decision threshold is well-separated from the mean.
+\textbf{Dwell time (MAE=134.36\,s, RMSE=181.42\,s)}: High prediction error, reflecting the difficulty of dwell time estimation. The ground-truth dwell time is computed as a proxy based on distance and speed at the observation time, rather than being directly measured from actual vehicle departure events. This proxy target has high variance: vehicles may decelerate, change direction, or stop within the coverage zone, introducing noise that no model can fully capture. Despite the high MAE, the binary decision of ``is dwell time sufficient for migration?'' remains learnable because the decision threshold is well-separated from the mean.
 
-\textbf{Failure probability (AUC=0.4992, Brier=0.247)}: Near-random prediction performance. We acknowledge this frankly: the failure probability target is inherently noisy because it represents a binary stochastic outcome (success/failure) that depends on factors not fully captured by the observation features. With AUC below 0.5, the model's predictions are no better than random guessing for this target. The $+0.04$\,pp improvement of BC+LSTM over BC in the ablation study (\nameref{sec:ablation} subsection) is attributable primarily to the RSRP and congestion predictions, which show meaningful prediction accuracy (MAE=1.63\,dB and 0.186 respectively). The failure probability feature (AUC=0.4992) does not contribute positively and may introduce adversarial noise. We retain it in the 14-feature input for completeness but recommend excluding it in production deployments.
+\textbf{Failure probability (AUC=0.4992, Brier=0.247)}: Near-random prediction performance. The failure probability target is inherently noisy because it represents a binary stochastic outcome (success/failure) that depends on factors not fully captured by the observation features. With AUC below 0.5, the model's predictions are no better than random guessing for this target. The $+0.04$\,pp improvement of BC+LSTM over BC in the ablation study (\nameref{sec:ablation} subsection) is attributable primarily to the RSRP and congestion predictions, which have meaningful prediction accuracy (MAE=1.63\,dB and 0.186 respectively). The failure probability feature (AUC=0.4992) does not contribute positively and may introduce adversarial noise. We retain it in the 14-feature input for completeness but recommend excluding it in production deployments.
 
 Despite the mixed LSTM prediction quality, the ablation study (\nameref{sec:ablation} subsection) shows that the four LSTM-predicted features still provide a marginal (+0.04\,pp) improvement to the BC policy, suggesting that even noisy predictions contain some useful signal when combined with the strong base features.
 
@@ -1057,13 +1057,13 @@ QI-SA (Modified)   & 101 & 0.9910 & lr=0.005, h=64, d=0.1 \\
 
 Several observations emerge from this comparison:
 
-\textbf{Efficiency vs.\ quality tradeoff.} Random Search achieves competitive performance (F1=0.9908) in only 20 evaluations---fewer than any other method---by leveraging stochastic sampling. This makes it an attractive default choice when computational budget is constrained.
+\textbf{Efficiency vs.\ quality tradeoff.} Random Search achieves F1=0.9908 in only 20 evaluations, fewer than any other method, by using stochastic sampling. This makes it an attractive default choice when computational budget is constrained.
 
-\textbf{QI-SA finds the best configuration.} The modified simulated annealing optimizer (QI-SA) achieves the highest F1 (0.9910), surpassing both Random Search and Grid Search. The $\cos^2$ modulation of the acceptance probability (Eq.~\ref{eq:sa}) provides a consistent advantage in escaping local optima for the hyperparameter search space. However, it requires 101 evaluations to reach this result, compared to 20 for Random Search.
+\textbf{QI-SA finds the best configuration.} The modified simulated annealing optimizer (QI-SA) achieves the highest F1 (0.9910), above both Random Search and Grid Search. The $\cos^2$ modulation of the acceptance probability (Eq.~\ref{eq:sa}) provides a consistent advantage in escaping local optima for the hyperparameter search space. However, it requires 101 evaluations to reach this result, compared to 20 for Random Search.
 
 \textbf{Grid Search is suboptimal.} Grid Search tests 45 configurations (all combinations of lr $\in$ \{0.001, 0.002, 0.005\}, hidden $\in$ \{64, 128, 256\}, dropout $\in$ \{0.1, 0.2, 0.3, 0.4, 0.5\}) but achieves the lowest F1 (0.9906), suggesting that the optimal configuration lies between grid points.
 
-\textbf{All optimizers converge to similar regions.} The best parameters across methods share a common learning rate (lr=0.005 for all except Grid Search) and hidden size (h=64 for three of four methods), suggesting a relatively flat loss landscape near the optimum. The absolute F1 differences are small ($<$0.1\%), confirming that the model is relatively insensitive to hyperparameter choices near the optimum.
+\textbf{All optimizers converge to similar regions.} The best parameters across methods share a common learning rate (lr=0.005 for all except Grid Search) and hidden size (h=64 for three of four methods), suggesting a relatively flat loss surface near the optimum. The absolute F1 differences are small ($<$0.1\%), confirming that the model is relatively insensitive to hyperparameter choices near the optimum.
 
 \textbf{Note on reported BC configuration.} The final reported Voc-6G (BC) result in Table~\ref{tab:main_results} (F1=0.9922) uses the default training configuration (lr=$10^{-3}$, hidden=[256,128,64], dropout=0.3) rather than the optimizer-tuned configuration, to provide a representative baseline that does not benefit from hyperparameter search.
 
@@ -1099,27 +1099,27 @@ In terms of raw error counts, the Leak-Free Trust-Aware variant reduces errors f
 
 \subsection*{Analysis of Trust-Aware Classification Performance and Limitations}
 
-The strong performance of \VocSixG{} Leak-Free Trust-Aware (F1=0.9998) warrants careful analysis. The trust module filters out unreliable edge nodes by computing composite trust scores based on historical reliability, latency anomalies, authentication failures, and failure streaks. In scenarios where all available edge nodes have low trust scores (e.g., during a network-wide degradation event), the trust module effectively removes edge migration from the candidate action set, defaulting to local execution. Conversely, when high-trust nodes are available, the trust filter removes ambiguity by excluding low-trust alternatives that might otherwise lead to misclassification.
+The strong performance of \VocSixG{} Leak-Free Trust-Aware (F1=0.9998) deserves a closer look. The trust module filters out unreliable edge nodes by computing composite trust scores based on historical reliability, latency anomalies, authentication failures, and failure streaks. In scenarios where all available edge nodes have low trust scores (e.g., during a network-wide degradation event), the trust module effectively removes edge migration from the candidate action set, defaulting to local execution. Conversely, when high-trust nodes are available, the trust filter removes ambiguity by excluding low-trust alternatives that might otherwise lead to misclassification.
 
-This behavior is analogous to feature selection in supervised learning---by removing noisy or uninformative candidates, the effective decision space becomes more separable. The near-perfect test-set accuracy suggests that the trust-augmented feature space is highly separable for this dataset, which is plausible given that node reliability is a strong predictor of migration success.
+This behavior is analogous to feature selection in supervised learning: by removing noisy or uninformative candidates, the effective decision space becomes more separable. The near-perfect test-set accuracy suggests that the trust-augmented feature space is highly separable for this dataset, which is plausible given that node reliability is a strong predictor of migration success.
 
 \textbf{Information leakage caveat.} When trust scores are computed from the full training set, they create an indirect information path: the trust score aggregates ground-truth migration outcomes at the node level, providing a near-perfect proxy for the decision boundary. This yields F1=1.0000, which we report only as an upper bound reference. The leak-free variant (F1=0.9998) computes trust scores from a temporal prefix of the training data, eliminating this leakage path. The gap between 1.0000 and 0.9998 quantifies the information leakage effect and provides a more realistic estimate of deployment performance.
 
-\textbf{Detailed factor analysis.} We identify three specific mechanisms contributing to the strong result:
+\textbf{Detailed factor analysis.} We identify three mechanisms contributing to the strong result:
 
 (1) \textit{Trust-based feature selection.} Even with temporally-separated trust computation, the trust score filters out unreliable edge nodes whose inclusion would create classification ambiguity. Nodes with historically low success rates are assigned the ``local'' action, reducing the effective decision space to more separable regions.
 
 (2) \textit{Deterministic outcome generation.} The migration success/failure outcomes in our CyberTwin dataset are generated by a deterministic function of observable features (RSRP, speed, distance, latency). When trust scores aggregate these outcomes at the node level, they become strong (though not perfect) proxies for the ground-truth decision boundary.
 
-(3) \textit{Practical interpretation.} We view the leak-free trust-aware accuracy (F1=0.9998) as a demonstration of the potential of trust integration, rather than an expected deployment performance. In real-world deployments, distribution shifts between training and deployment would introduce noise, and adversarial nodes could manipulate their trust profiles. The federated variant (F1=0.9929) without trust features represents a more conservative deployment estimate.
+(3) \textit{Practical interpretation.} We view the leak-free trust-aware accuracy (F1=0.9998) as evidence of the potential of trust integration, rather than an expected deployment performance. In real-world deployments, distribution shifts between training and deployment would introduce noise, and adversarial nodes could manipulate their trust profiles. The federated variant (F1=0.9929) without trust features represents a more conservative deployment estimate.
 
-\textbf{Post-hoc trust filtering is not viable.} The catastrophic failure of the post-hoc trust filter (F1=0.3906)---identical to the Local Only baseline---provides an important negative result for the field. Applying trust as a simple threshold-based post-processing override eliminates all migration predictions, because the trust threshold ($\tau_{\min}=0.5$) overrides a substantial fraction of the model's predictions. This demonstrates that trust information must be integrated into the model's input features during training, allowing the model to learn nuanced trust-dependent decision boundaries, rather than applied as a blunt post-hoc filter.
+\textbf{Post-hoc trust filtering is not viable.} The catastrophic failure of the post-hoc trust filter (F1=0.3906), identical to the Local Only baseline, provides a useful negative result for the field. Applying trust as a simple threshold-based post-processing override eliminates all migration predictions, because the trust threshold ($\tau_{\min}=0.5$) overrides a substantial fraction of the model's predictions. Trust information must be integrated into the model's input features during training, so the model can learn nuanced trust-dependent decision boundaries, rather than applied as a blunt post-hoc filter.
 
 \textbf{Baseline performance convergence.} The learning-based baselines (Random Forest, SVM, MLP, TextCNN, BiLSTM) all achieve F1-Macro scores in the 99.17--99.29\% range. This convergence reflects the high signal-to-noise ratio of the 10 engineered features, which capture the primary determinants of migration success. With 28,000 training samples, all models converge to near-optimal decision boundaries. The practical implication is that model selection should be guided by deployment constraints (memory, latency, FL compatibility) rather than marginal accuracy differences. Random Forest (F1=0.9929) confirms that nonlinear feature combinations suffice for this task, but lacks the architectural components (prediction, trust, FL) required for deployment.
 
 \subsection*{CyberTwin-Facilitated Data Generation Methodology}
 
-A distinguishing feature of \VocSixG{} is its use of a CyberTwin layer for data generation, as opposed to standalone simulators or purely synthetic data generation. Most existing IoV task migration frameworks rely on simulators such as NS-3, OMNeT++, or SUMO, which, while useful for protocol-level analysis, introduce simplifications that can significantly affect model performance in deployment~\cite{hou2018mobile}. By contrast, \VocSixG{} leverages:
+A distinguishing feature of \VocSixG{} is its use of a CyberTwin layer for data generation, as opposed to standalone simulators or purely synthetic data generation. Most existing IoV task migration frameworks rely on simulators such as NS-3, OMNeT++, or SUMO, which, while useful for protocol-level analysis, introduce simplifications that can significantly affect model performance in deployment~\cite{hou2018mobile}. By contrast, \VocSixG{} uses:
 
 \begin{itemize}
     \item 3GPP standardized propagation models (TR 38.901) at $f_c=28$\,GHz, calibrated for mmWave urban environments
@@ -1128,13 +1128,13 @@ A distinguishing feature of \VocSixG{} is its use of a CyberTwin layer for data 
     \item Provenance tracking to ensure data format consistency and completeness
 \end{itemize}
 
-The CyberTwin framework provides additional advantages over standalone simulation: persistent entity state enables sequence-based prediction (for the LSTM module), entity-level data partitioning supports federated learning (each zone's CyberTwin has its own local data repository), and the digital replica metaphor facilitates interpretability by maintaining a clear mapping between model inputs and physical quantities.
+The CyberTwin framework provides additional advantages over standalone simulation: persistent entity state supports sequence-based prediction (for the LSTM module), entity-level data partitioning supports federated learning (each zone's CyberTwin has its own local data repository), and the digital replica metaphor aids interpretability by maintaining a clear mapping between model inputs and physical quantities.
 
 We acknowledge that the CyberTwin data generation process, while grounded in empirical distributions, does not constitute a physical deployment test. The transition from CyberTwin-based evaluation to real-world deployment would require addressing distribution shifts, calibration validation, and online adaptation mechanisms.
 
 \subsection*{Federated Learning Tradeoffs}
 
-The minimal performance gap between centralized and federated training (BC F1=0.9922 vs.\ Federated F1=0.9929) is a significant practical finding. Notably, the federated variant slightly outperforms centralized BC, suggesting that distributed training acts as a regularizer. This demonstrates that:
+The minimal performance gap between centralized and federated training (BC F1=0.9922 vs.\ Federated F1=0.9929) is a useful practical finding. The federated variant slightly outperforms centralized BC, suggesting that distributed training acts as a regularizer. From this we observe:
 \begin{itemize}
     \item The migration decision features are sufficiently informative that local models can learn effective policies from zone-specific data alone.
     \item The low inter-client heterogeneity means that FedProx provides marginal benefit over FedAvg in this scenario, though FedProx shows value under artificially increased heterogeneity.
@@ -1149,11 +1149,11 @@ The current evaluation uses 300 vehicles, 25 RSUs, and 8 MEC nodes. For larger-s
 
 \textbf{Horizontal scalability via federated learning.} Adding new edge nodes or vehicle fleet operators as FL clients requires no modification to the global training loop. The FedAvg aggregation complexity is $O(C \cdot |\theta|)$ where $C$ is the number of clients and $|\theta|$ is the model parameter count, growing linearly with participants.
 
-\textbf{Prediction latency bounds.} The LSTM predictive module requires $O(W \cdot d \cdot h)$ operations per prediction ($W{=}10$ window, $d{=}7$ features, $h{=}128$ hidden), yielding approximately 9,000 FLOPs per prediction---well within the sub-millisecond latency budget for real-time migration decisions.
+\textbf{Prediction latency bounds.} The LSTM predictive module requires $O(W \cdot d \cdot h)$ operations per prediction ($W{=}10$ window, $d{=}7$ features, $h{=}128$ hidden), yielding approximately 9,000 FLOPs per prediction, well within the sub-millisecond latency budget for real-time migration decisions.
 
 \textbf{Trust computation overhead.} The trust scorer maintains per-node statistics using fixed-size deques, providing $O(1)$ update and $O(K)$ query complexity where $K$ is the number of registered nodes. For deployments with up to 1,000 edge nodes, trust scoring adds negligible overhead.
 
-\textbf{Communication overhead.} During each federated round, clients transmit model updates (not raw data). For the BC policy with approximately 200K parameters (32-bit), each client update requires approximately 800 KB of bandwidth. With 10 clients per round and 20 rounds, the total overhead is approximately 160 MB---trivial for modern vehicular networks.
+\textbf{Communication overhead.} During each federated round, clients transmit model updates (not raw data). For the BC policy with approximately 200K parameters (32-bit), each client update requires approximately 800 KB of bandwidth. With 10 clients per round and 20 rounds, the total overhead is approximately 160 MB, trivial for modern vehicular networks.
 
 \subsection*{Limitations and Future Work}
 
@@ -1184,25 +1184,25 @@ Several limitations of the current work suggest directions for future research:
 \section*{Conclusion}
 \label{sec:conclusion}
 
-This paper presented \VocSixG{}, a CyberTwin-enabled intelligent task migration framework for 6G mmWave vehicular edge computing. By integrating an LSTM-based predictive module, composite trust scoring, offline learning via Behavioral Cloning and Conservative Q-Learning, federated learning with FedAvg/FedProx aggregation, and a modified simulated annealing optimizer, \VocSixG{} addresses the critical challenges of proactive migration decision-making, security-aware node selection, privacy-preserving distributed training, and robust optimization in vehicular edge computing.
+This paper presented \VocSixG{}, a CyberTwin-enabled task migration framework for 6G mmWave vehicular edge computing. By integrating an LSTM-based predictive module, composite trust scoring, offline learning via Behavioral Cloning and Conservative Q-Learning, federated learning with FedAvg/FedProx aggregation, and a modified simulated annealing optimizer, \VocSixG{} addresses proactive migration decision-making, security-aware node selection, privacy-preserving distributed training, and stable optimization in vehicular edge computing.
 
-The CyberTwin layer maintains synchronized digital replicas of 300 vehicles, 25 RSUs, and 8 MEC servers operating at 28\,GHz, from which 40,000 migration decision records are harvested for training and evaluation. Extensive evaluation on 6,000 held-out test instances demonstrated that \VocSixG{} with leak-free trust-aware filtering achieves F1-Macro=0.9998, AUC-ROC=0.9998, while the federated variant maintains competitive performance (F1-Macro=0.9929) without requiring data centralization. Multi-seed stability analysis confirmed robust generalization (mean F1-Macro = $0.9925 \pm 0.0011$ for BC), and statistical tests (McNemar's test, $p=0.0084$ for BC vs.\ CQL) validated the significance of performance differences.
+The CyberTwin layer maintains synchronized digital replicas of 300 vehicles, 25 RSUs, and 8 MEC servers operating at 28\,GHz, from which 40,000 migration decision records are harvested for training and evaluation. Evaluation on 6,000 held-out test instances showed that \VocSixG{} with leak-free trust-aware filtering achieves F1-Macro=0.9998, AUC-ROC=0.9998, while the federated variant reaches F1-Macro=0.9929 without requiring data centralization. The BC variant is stable across seeds (mean F1-Macro = $0.9925 \pm 0.0011$), and statistical tests (McNemar's test, $p=0.0084$ for BC vs.\ CQL) confirm the performance differences.
 
 \textbf{Key takeaways.} Our experimental results yield several insights for the research community:
 
-(1) \textit{Empirical calibration matters.} Even within a CyberTwin-facilitated evaluation, grounding the data generation in empirical distributions (3GPP propagation models at 28\,GHz, CRAWDAD mobility statistics, ETSI MEC utilization profiles~\cite{etsi_mec003}) produces evaluation conditions that more closely approximate deployment environments than arbitrary synthetic data generation. The CyberTwin framework further enhances this by providing persistent state tracking, sequence extraction for prediction, and natural support for federated learning.
+(1) \textit{Empirical calibration matters.} Even within a CyberTwin-facilitated evaluation, grounding the data generation in empirical distributions (3GPP propagation models at 28\,GHz, CRAWDAD mobility statistics, ETSI MEC utilization profiles~\cite{etsi_mec003}) produces evaluation conditions that more closely approximate deployment environments than arbitrary synthetic data generation. The CyberTwin framework adds to this by providing persistent state tracking, sequence extraction for prediction, and natural support for federated learning.
 
-(2) \textit{Trust integration provides substantial gains---but must be architectural.} The +0.76 percentage point improvement from BC (F1=0.9922) to leak-free trust-aware BC (F1=0.9998) demonstrates that security-aware node filtering can reduce residual classification errors, even when the base policy is already highly accurate. Critically, the post-hoc trust filter (F1=0.3906) shows that trust must be integrated into the model's input features during training; simple threshold-based post-processing destroys classifier performance.
+(2) \textit{Trust integration provides substantial gains, but must be architectural.} The +0.76 percentage point improvement from BC (F1=0.9922) to leak-free trust-aware BC (F1=0.9998) shows that security-aware node filtering can reduce residual classification errors even when the base policy is already highly accurate. The post-hoc trust filter (F1=0.3906) shows that trust must be integrated into the model's input features during training; simple threshold-based post-processing destroys classifier performance.
 
-(3) \textit{Federated learning is viable---and potentially beneficial---for migration policies.} The federated variant (F1=0.9929) slightly exceeds centralized BC (F1=0.9922), confirming that zone-specific migration data contains sufficient local signal for effective policy learning, and that distributed training may provide a regularization benefit. This enables privacy-preserving deployment in multi-operator environments.
+(3) \textit{Federated learning is viable, and potentially beneficial, for migration policies.} The federated variant (F1=0.9929) slightly exceeds centralized BC (F1=0.9922), confirming that zone-specific migration data contains sufficient local signal for effective policy learning, and that distributed training may provide a regularization benefit. This supports privacy-preserving deployment in multi-operator environments.
 
-(4) \textit{CQL conservatism is a limitation in data-sparse offline settings.} The underperformance of CQL relative to BC (0.35\,pp in F1) highlights that value-based offline RL requires broader state-action coverage than typically available in logged CyberTwin data. Future work should prioritize data collection strategies or hybrid online-offline approaches to address this gap.
+(4) \textit{CQL conservatism is a limitation in data-sparse offline settings.} The underperformance of CQL relative to BC (0.35\,pp in F1) shows that value-based offline RL requires broader state-action coverage than typically available in logged CyberTwin data. Future work should prioritize data collection strategies or hybrid online-offline approaches to address this gap.
 
 (5) \textit{Model architecture is secondary to feature quality.} The convergence of all DL baselines (TextCNN, BiLSTM, MLP) and Random Forest within a 0.12\% F1 range suggests that the engineered features provide strong discriminative power, and that model selection should prioritize deployment constraints (latency, memory, FL compatibility) over marginal accuracy gains.
 
 (6) \textit{Prediction accuracy varies across targets.} The LSTM module achieves good accuracy for RSRP prediction (MAE=1.63\,dB) but high error for dwell time (MAE=134.36\,s) and near-random failure probability prediction (AUC=0.4992). Future predictive modules should focus on more learnable targets and acknowledge inherent prediction limits.
 
-These results establish \VocSixG{} as a practical framework for next-generation vehicular edge computing, providing a strong foundation for intelligent task migration in 6G-enabled autonomous transportation systems. Future work will explore multi-target migration, adversarial robustness against Byzantine and data poisoning attacks, online continual adaptation to distribution shifts, cross-domain transfer between different urban environments, and integration with emerging 6G native AI capabilities.
+Future work will explore multi-target migration, adversarial robustness against Byzantine and data poisoning attacks, online continual adaptation to distribution shifts, cross-domain transfer between different urban environments, and integration with emerging 6G native AI capabilities.
 % \section*{Supporting information}
 
 % % Include only the SI item label in the paragraph heading. Use the \nameref{label} command to cite SI items in the text.
