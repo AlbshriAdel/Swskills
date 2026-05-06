@@ -78,7 +78,7 @@ ai_peer_review_restriction: "Editors and reviewers must NOT upload submission co
 latex_template_url: "https://journals.plos.org/plosone/s/latex"
 latex_template_overleaf: "https://www.overleaf.com/latex/templates/latex-template-for-plos-public-library-of-science-articles/wdmgcwzgvhnn"
 latex_template_notes: |
-  PLOS ships a single LaTeX template (plos_latex_template.tex) plus a BibTeX style (plos2015.bst). Single .tex file required at final submission. Manuscript must follow the template's section structure and macros. Vector EPS produced by LaTeX (e.g. via psfrag, pgfplots EPS) is rejected — export figures from Illustrator/Inkscape instead.
+  PLOS ships a single LaTeX template (plos_latex_template.tex) plus a BibTeX style (plos2025.bst). Single .tex file required at final submission. Manuscript must follow the template's section structure and macros. Vector EPS produced by LaTeX (e.g. via psfrag, pgfplots EPS) is rejected — export figures from Illustrator/Inkscape instead.
 
 # Editorial
 acceptance_rate: "Approximately 50% (long-running PLOS published figure)."
