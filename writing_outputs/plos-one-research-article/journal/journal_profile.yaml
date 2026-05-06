@@ -1,0 +1,115 @@
+journal: "PLOS ONE"
+article_type: "Research Article"
+guidelines_url: "https://journals.plos.org/plosone/s/submission-guidelines"
+guidelines_fetched: "2026-05-06"
+
+# Length limits
+main_text_limit: "No formal word limit. Papers may be as long as needed; published Research Articles typically fall between 3,000 and 8,000 words."
+abstract_limit: "300 words maximum"
+abstract_sections: "Unstructured (single paragraph). No citations permitted in the abstract. Should summarize background, methods, results, and conclusions."
+methods_limit: "No fixed limit; must be detailed enough to allow full reproduction of the study."
+figure_limit: "No fixed cap; use as many as needed. Each figure cited sequentially in the text."
+figure_legend_limit: "No fixed word cap, but legends should be concise and self-contained."
+reference_limit: "No fixed cap."
+supplementary: "Permitted as Supporting Information (SI). Each SI item cited in text as 'S1 File', 'S1 Fig', 'S1 Table', etc. Captions for SI included at end of main manuscript."
+
+# Format
+citation_style: "PLOS ONE numbered (Vancouver-style). Citations in square brackets, numbered in the order they first appear: [1], [2,3], [4-7]."
+reference_format_example: "Heber U. Astronomy. White dwarf mergers and the rebirth of luminous stars. Science. 2002;296: 2344-2345. DOIs must be included for every reference that has one. Author names: surname followed by initials, no periods between initials."
+section_order: |
+  1. Title
+  2. Authors and affiliations
+  3. Abstract (unstructured, ≤300 words)
+  4. Introduction
+  5. Materials and Methods (may be placed before Results, between Results and Discussion, or after Discussion)
+  6. Results (Results and Discussion may be combined)
+  7. Discussion
+  8. Conclusions (optional; may be merged into Discussion)
+  9. Acknowledgments
+  10. References
+  11. Figure legends (after References, in numerical order)
+  12. Tables (after Figure legends, in numerical order)
+  13. Supporting Information captions
+methods_placement: "Flexible. Default order is Introduction → Methods → Results → Discussion. PLOS ONE allows Methods after Discussion or before Results."
+special_elements:
+  - "Data Availability Statement (mandatory): listed in submission system; must specify repository/repositories with DOIs, accession numbers, or persistent identifiers for all data underpinning the findings. If access is restricted, the statement must explain why and how an interested researcher can request access."
+  - "Financial Disclosure / Funding Statement (mandatory): each funding source listed with grant number(s) and the funder's role. If unfunded use the verbatim sentence: 'The author(s) received no specific funding for this work.'"
+  - "Competing Interests statement (mandatory): full disclosure of all potential competing interests including patents, products in development, consulting relationships."
+  - "Author Contributions via CRediT taxonomy (mandatory): at least one CRediT role per author entered in the submission system."
+  - "Ethics statement (mandatory if applicable): IRB/ethics committee name, approval number, consent procedure for human subjects research; IACUC name and permit number for animal research. Required at submission."
+  - "ORCID iD recommended for the corresponding author."
+
+# File format
+file_format: "Initial submission accepts DOCX, RTF, or PDF (PDF generated from LaTeX is acceptable). On acceptance authors must supply LaTeX source (.tex + .bib + figures) or DOCX. Combine multiple .tex files into a single .tex for final submission."
+
+# Title
+title_rules: "Specific, descriptive, concise. Maximum 250 characters. Sentence case (only first word, proper nouns, and genus names capitalized). Avoid specialist abbreviations. Do not begin with 'A' or 'The'."
+short_title: "≤50 characters running title supplied separately in the submission system."
+
+# Language
+language_spelling: "American or British English permitted; consistent within manuscript. Plain, direct prose. PLOS ONE does not copyedit; authors are responsible for clear language."
+
+# Figures
+figure_format:
+  raster: "TIFF, 300-600 dpi (PLOS production tool NAAS used for conversion)."
+  vector: "EPS exported from Adobe Illustrator or Inkscape. Vector EPS generated from LaTeX is NOT accepted."
+  caption_label: "Figures referenced in text and labels as 'Fig 1', 'Fig 2' (abbreviated 'Fig', not 'Figure', except at start of sentence)."
+  width: "Single column ≤ 13.2 cm; 1.5-column ≤ 19.05 cm; double-column / full-page width as needed up to journal max."
+  color: "RGB. Colorblind-safe palettes encouraged."
+  separate_files: "Each figure submitted as a separate file at submission; legends placed in main manuscript after References."
+
+# Tables
+table_format: "Editable format (not images). Placed after Figure legends in main manuscript or supplied as separate files. Cited in text as 'Table 1', 'Table 2'. Footnotes via superscript symbols below the table body."
+
+# AI policy
+ai_policy_summary: |
+  PLOS prohibits listing AI tools (including LLMs such as ChatGPT) as authors or contributors — authorship requires human accountability. AI contributions to the study or manuscript content must be disclosed.
+ai_disclosure_required: true
+ai_tools_declaration_format: |
+  Disclose in a dedicated AI-use sub-section of the Methods (or in Acknowledgments for article types lacking a Methods section). Include:
+    1. Name and version of each AI tool used.
+    2. Description of how the tool was used.
+    3. How the authors evaluated the validity of the tool's output.
+    4. Which aspects of the study, manuscript content, data, or supporting files were generated or affected by AI use.
+ai_tools_declaration_location: "Methods section (dedicated sub-section). For article types without Methods, place in Acknowledgments."
+ai_peer_review_restriction: "Editors and reviewers must NOT upload submission content to generative AI platforms, websites, databases, or other tools (confidentiality)."
+
+# Template
+latex_template_url: "https://journals.plos.org/plosone/s/latex"
+latex_template_overleaf: "https://www.overleaf.com/latex/templates/latex-template-for-plos-public-library-of-science-articles/wdmgcwzgvhnn"
+latex_template_notes: |
+  PLOS ships a single LaTeX template (plos_latex_template.tex) plus a BibTeX style (plos2015.bst). Single .tex file required at final submission. Manuscript must follow the template's section structure and macros. Vector EPS produced by LaTeX (e.g. via psfrag, pgfplots EPS) is rejected — export figures from Illustrator/Inkscape instead.
+
+# Editorial
+acceptance_rate: "Approximately 50% (long-running PLOS published figure)."
+desk_rejection_rate: "~20% of submissions desk-rejected without external review."
+desk_rejection_criteria:
+  - "Out of scope (PLOS ONE accepts most science/engineering/medicine/social science/humanities, but excludes purely speculative/non-empirical work)."
+  - "Obvious methodological problems."
+  - "Missing or inadequate Data Availability Statement."
+  - "Missing ethics approvals (human subjects or animal research) at submission — automatic rejection without review since March 2023."
+  - "Inadequate language quality preventing review."
+  - "Failure to follow LaTeX template structure (manuscript may be returned for revisions)."
+editorial_priorities: |
+  PLOS ONE judges manuscripts on scientific validity and methodological rigor, NOT on perceived novelty, significance, or impact. Replication studies, negative results, and null findings are explicitly in scope. Required:
+    - Clearly defined objectives.
+    - Solid data with adequate statistical analysis.
+    - Rigorously conducted experiments with appropriate controls and replication.
+    - Reporting that meets community standards (CONSORT, PRISMA, ARRIVE, STROBE, etc., depending on study type).
+
+# Reporting standards (mandatory where applicable)
+reporting_guidelines:
+  randomized_trial: "CONSORT — checklist + flow diagram required."
+  systematic_review_meta_analysis: "PRISMA — checklist + flow diagram required; protocol registered (e.g., PROSPERO) recommended."
+  observational_epi: "STROBE."
+  animal_research: "ARRIVE 2.0 — checklist required."
+  diagnostic_accuracy: "STARD."
+  qualitative_research: "SRQR or COREQ."
+  preclinical_models: "Reporting per ARRIVE / community-specific guidelines."
+
+# Open access / licensing
+open_access: "All PLOS ONE articles published open access under CC-BY 4.0."
+apc: "Article Processing Charge applies on acceptance; fee waivers available for authors from low-income countries (PLOS Global Equity Model)."
+
+# Preprint policy
+preprint_policy: "Preprints permitted and encouraged (e.g., bioRxiv, medRxiv, arXiv). Preprint must be cited in the cover letter and the manuscript should not be substantively duplicated in another venue."
